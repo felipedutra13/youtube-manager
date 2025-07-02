@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import youtubeRoutes from './youtube.routes.ts';
-import appRoutes from './app.routes.ts';
+import youtubeRoutes from './youtube.routes';
+import appRoutes from './app.routes';
 
 const router = Router();
 

@@ -1,6 +1,6 @@
-import { getPlaylistItems } from "../api/youtube.ts";
+import { getPlaylistItems } from "../api/youtube";
 
-export const fetchPlaylistItems = async (playlistId: string) => {
-  const response = await getPlaylistItems(playlistId);
+export const fetchPlaylistItems = async (playlistTitle: string) => {
+  const response = await getPlaylistItems(playlistTitle);
   return response.items;
 };

@@ -1,4 +1,4 @@
-import { fetchPlaylistItems } from './youtube.ts';
+import { fetchPlaylistItems } from './youtube';
 
 const YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
 
@@ -17,8 +17,8 @@ function formatOutput(item: any) {
 
 class PlaylistService {
 
-    async getRandomPlaylistItem(playlistId: string) {
-        const items = await fetchPlaylistItems(playlistId);
+    async getRandomPlaylistItem(playlistTitle: string) {
+        const items = await fetchPlaylistItems(playlistTitle);
         const item = getRandomElementFromPlaylistItems(items);
         return formatOutput(item);
     }

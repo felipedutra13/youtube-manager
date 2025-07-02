@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import YoutubeController from '../controllers/youtube.ts';
+import YoutubeController from '../controllers/youtube';
 
 const router = Router();
 const youtubeController = new YoutubeController();

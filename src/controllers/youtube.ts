@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as youtubeService from '../services/youtube.ts';
+import * as youtubeService from '../services/youtube';
 
 class YoutubeController {
 

@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /.history
+/.dist
 /.pnp
 .pnp.js
 .yarn/install-state.gz
