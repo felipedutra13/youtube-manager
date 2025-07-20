@@ -17,7 +17,21 @@ function formatOutput(item) {
 class PlaylistService {
 
     async getRandomPlaylistItem(playlistId) {
-        const items = await fetchPlaylistItems(playlistId);
+        const items = [];
+        let finished = false;
+        let nextPageToken = 0;
+
+        do {
+            let response = await fetchPlaylistItems(playlistId, nextPageToken);
+            items.push(...response.items);
+
+            if (response.nextPageToken) {
+                nextPageToken = response.nextPageToken;
+            } else {
+                finished = true;
+            }
+        } while (!finished);
+
         const item = getRandomElementFromPlaylistItems(items);
         return formatOutput(item);
     }
