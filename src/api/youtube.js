@@ -17,3 +17,17 @@ export const getPlaylistItems = async (playlistId, nextPageToken) => {
     });
     return res.data;
 };
+
+export const listVideos = async (videoIds) => {
+    let params = {
+        part: 'contentDetails,snippet',
+        key: process.env.YOUTUBE_API_KEY,
+        id: videoIds.join(',')
+    };
+
+    const res = await axios.get('/videos', {
+        params: params
+    });
+
+    return res.data;
+};

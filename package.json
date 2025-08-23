@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node --watch server.js",
     "build": "npm install",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jest tests/*/*.js"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +17,8 @@
     "axios": "^1.10.0",
     "dotenv": "^17.2.0",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "jest": "^30.0.4"
   }
 }

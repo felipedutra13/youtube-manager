@@ -10,5 +10,6 @@ export const playlists = {
     it: "PL0_2kgAcjidu07GFC8zp7KrgJf1TBq37T",
     mental: "PL0_2kgAcjidtRke_ftqmc2m5iYjaVp6d5",
     saude: "PL0_2kgAcjidva03eS_QXAmP5N6IJbfI2a",
-    series: "PL0_2kgAcjidvAWEgivDMolX51c_s8S9E9"
+    series: "PL0_2kgAcjidvAWEgivDMolX51c_s8S9E9",
+    other: "PL3GmVvcXE6cuMZTamrO_UhznDM6veE7Nj"
 };
