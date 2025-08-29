@@ -1,4 +1,5 @@
-import puppeteer from 'puppeteer';
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import * as cheerio from "cheerio";
 
 function extractPrices(html) {
@@ -7,8 +8,8 @@ function extractPrices(html) {
         return parseFloat(
             text
                 .replace(/[^\d.,]/g, "")
-                .replace(/\./g, "")      
-                .replace(",", ".")       
+                .replace(/\./g, "")
+                .replace(",", ".")
         );
     }
 
@@ -84,12 +85,17 @@ class EshopPrices {
 
         do {
 
-            let browser = await puppeteer.launch({ headless: false });
+            let browser = await puppeteer.launch({
+                headless: true,
+                executablePath: await chromium.executablePath(),
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+            });
             let page = await browser.newPage();
 
             await page.setCookie({
                 name: "_eps",
-                value: "2SpYAHELtoulMJmT2frdmVQJjyWUeh2%2FSBb9rWeZg%2Fqm6kltIX%2F6xcMMMZCBXcy72%2BKvQeCU8XTHF5ReAlhT6cxRGU%2BPKhOaz%2Beh4W1%2Fs8B13ctMtW6IcatDu2aUCNpFPL7ek3lSt%2FT50t7%2Bly0Hjl%2Bd3XAacPUWbIhNROa11v78ZLNLvNGrQklOswQbgYAPBxU5CE74G%2Bgy8Z1X8cADdWLws21hqQG8%2FZYg2PqkbLXnSYwmlUDjMf%2FijVzWvSMdlalU2CGTheoS2RrROZYXbU2otA2SpQtI4l5wOxBJwHHtOyUT6VFs%2BQrcbmVRp4KNQLmKX1NA9T%2FY9rDWPm5xSq1h7MoDHd31Y%2BtGTLdf71MYJC4rYZ7FnJaV%2FOCWUBDMJS3HIyeisyOQDXBO6%2FEIiROGvXz0NqPI1XLSGggrfR8r2f9RXmkfQA%2B44lznl%2FVBvsjxUmyGuTWSNcFJmmpJLylygs4UPvpbpf5zZR0nupOjDF1%2BXzxUWkZvIIaEnE8IZCHGPqb1H6p9x%2FtMyv0%3D--0LbIsN%2Br6vt3%2FAWO--QI4mV4TtG4zNZPdCkczgfg%3D%3D",
+                value: process.env.ESHOP_PRICES_TOKEN,
                 domain: "eshop-prices.com",
                 path: "/",
                 httpOnly: true,
