@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 import chromium from "@sparticuz/chromium";
 import * as cheerio from "cheerio";
 
@@ -83,15 +83,23 @@ class EshopPrices {
         let finished = false;
         let currentPage = 1;
 
-        do {
+        const isLocal = process.env.NODE_ENV !== "production";
 
-            let browser = await puppeteer.launch({
-                headless: true,
-                executablePath: await chromium.executablePath(),
-                args: chromium.args,
-                defaultViewport: chromium.defaultViewport,
-            });
+
+        do {
+            const browser = await puppeteer.launch(
+                isLocal
+                    ? { headless: false }
+                    : {
+                        headless: true,
+                        executablePath: await chromium.executablePath(),
+                        args: chromium.args,
+                        defaultViewport: chromium.defaultViewport,
+                    }
+            );
             let page = await browser.newPage();
+
+            console.log("Raw COOKIE value from env:", process.env.ESHOP_PRICES_TOKEN);
 
             await page.setCookie({
                 name: "_eps",
@@ -102,6 +110,10 @@ class EshopPrices {
                 secure: true,
                 sameSite: "Strict"
             });
+
+            const cookies = await page.cookies("https://eshop-prices.com");
+
+            console.log("Cookies in browser:", cookies);
 
             await page.goto(`https://eshop-prices.com/wishlist?currency=BRL&page=${currentPage}&sort_by=discount&direction=desc`);
 
