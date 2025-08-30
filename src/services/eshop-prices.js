@@ -30,6 +30,8 @@ function extractPrices(html) {
         return m ? `${m[1]}%` : null;
     }
 
+    console.log(html);
+
     const $ = cheerio.load(html);
 
     const games = [];
