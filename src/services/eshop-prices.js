@@ -1,6 +1,8 @@
-import puppeteer from "puppeteer";
+// import puppeteer from "puppeteer";
 import chromium from "@sparticuz/chromium";
 import * as cheerio from "cheerio";
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
 function extractPrices(html) {
     function cleanPrice(text) {
@@ -87,11 +89,13 @@ class EshopPrices {
 
         const isLocal = process.env.NODE_ENV !== "production";
 
+        puppeteer.use(StealthPlugin());
+
 
         do {
             const browser = await puppeteer.launch(
                 isLocal
-                    ? { headless: false }
+                    ? { headless: true }
                     : {
                         headless: true,
                         executablePath: await chromium.executablePath(),
@@ -105,7 +109,7 @@ class EshopPrices {
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
                 "(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
             );
-            
+
 
             console.log("Raw COOKIE value from env:", process.env.ESHOP_PRICES_TOKEN);
 
