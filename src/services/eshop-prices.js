@@ -1,8 +1,6 @@
 // import puppeteer from "puppeteer";
-import chromium from "@sparticuz/chromium";
 import * as cheerio from "cheerio";
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import axios from "axios";
 
 function extractPrices(html) {
     function cleanPrice(text) {
@@ -31,8 +29,6 @@ function extractPrices(html) {
         const m = raw.match(/(\d+)\s*%/);
         return m ? `${m[1]}%` : null;
     }
-
-    console.log(html);
 
     const $ = cheerio.load(html);
 
@@ -65,7 +61,11 @@ function extractPrices(html) {
     return games;
 }
 
-function filterByCountries(list) {
+function filterByCountries(list, filterRegion) {
+    if (!filterRegion) {
+        return list;
+    }
+    
     const AVAILABLE_COUNTRIES = ['i-flag-br', 'i-flag-ca', 'i-flag-cl', 'i-flag-mx', 'i-flag-co', 'i-flag-pe', 'i-flag-us'];
 
     return list.filter(item => AVAILABLE_COUNTRIES.find(country => country === item.flag));
@@ -82,66 +82,33 @@ function sortByDiscount(list) {
 
 class EshopPrices {
 
-    async listWishlistItems() {
+    async listWishlistItems(filterRegion) {
         let items = [];
         let finished = false;
         let currentPage = 1;
 
-        const isLocal = process.env.NODE_ENV !== "production";
-
-        puppeteer.use(StealthPlugin());
-
-
         do {
-            const browser = await puppeteer.launch(
-                isLocal
-                    ? { headless: true }
-                    : {
-                        headless: true,
-                        executablePath: await chromium.executablePath(),
-                        args: chromium.args,
-                        defaultViewport: chromium.defaultViewport,
-                    }
-            );
-            let page = await browser.newPage();
+            const targetUrl = encodeURIComponent(`https://eshop-prices.com/wishlist?currency=BRL&page=${currentPage}&sort_by=discount&direction=desc`);
+            const cookies = `_eps=${process.env.ESHOP_PRICES_TOKEN}`;
+            const encodedCookies = encodeURIComponent(cookies);
+            const config = {
+                'method': 'GET',
+                'url': `https://api.scrape.do/?token=${process.env.SCRAPEDO_API_KEY}&url=${targetUrl}&setCookies=${encodedCookies}`,
+                'headers': {}
+            };
+            let response = await axios(config);
 
-            await page.setUserAgent(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
-                "(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-            );
-
-
-            console.log("Raw COOKIE value from env:", process.env.ESHOP_PRICES_TOKEN);
-
-            await page.setCookie({
-                name: "_eps",
-                value: process.env.ESHOP_PRICES_TOKEN,
-                domain: "eshop-prices.com",
-                path: "/",
-                httpOnly: true,
-                secure: true,
-                sameSite: "Strict"
-            });
-
-            const cookies = await page.cookies("https://eshop-prices.com");
-
-            console.log("Cookies in browser:", cookies);
-
-            await page.goto(`https://eshop-prices.com/wishlist?currency=BRL&page=${currentPage}&sort_by=discount&direction=desc`);
-
-            let response = extractPrices(await page.content());
-            if (!response || !response.length) {
+            let result = extractPrices(response.data);
+            if (!result || !result.length) {
                 finished = true;
             } else {
-                items.push(...response);
+                items.push(...result);
             }
-
-            await browser.close();
 
             currentPage++;
         } while (!finished);
 
-        return sortByDiscount(filterByCountries(items));
+        return sortByDiscount(filterByCountries(items, filterRegion));
     }
 };
 
