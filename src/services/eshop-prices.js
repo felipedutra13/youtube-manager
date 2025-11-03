@@ -1,4 +1,3 @@
-// import puppeteer from "puppeteer";
 import * as cheerio from "cheerio";
 import axios from "axios";
 

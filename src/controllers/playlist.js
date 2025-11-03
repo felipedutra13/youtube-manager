@@ -11,12 +11,12 @@ function getPlayslistIdByTitle(playlistTitle) {
 
 class PlaylistController {
   async getRandomPlaylistItem(req, res) {
-    const { id, maxDuration } = req.query;
+    const { id, minDuration, maxDuration } = req.query;
 
     const playlistService = new PlaylistService();
 
     try {
-      const items = await playlistService.getRandomPlaylistItem(getPlayslistIdByTitle(id), maxDuration);
+      const items = await playlistService.getRandomPlaylistItem(getPlayslistIdByTitle(id), minDuration, maxDuration);
       res.json({ items });
     } catch (error) {
       res.status(500).json({ error: 'Erro ao buscar item da playlist' });

@@ -18,14 +18,14 @@ function formatVideoIds(items) {
     return items.map(item => item.snippet.resourceId.videoId);
 }
 
-function filterVideosByMaxDuration(videos, maxDuration) {
-    if (!maxDuration) {
+function filterVideosByMaxDuration(videos, minDuration, maxDuration) {
+    if (!maxDuration && !minDuration) {
         return videos;
     }
 
     return videos.filter(video => {
         let videoDurationInMinutes = youtubeDurationToMinutes(video.contentDetails.duration);
-        if (videoDurationInMinutes <= maxDuration) {
+        if (videoDurationInMinutes >= minDuration && videoDurationInMinutes <= maxDuration) {
             return true;
         } else {
             return false;
@@ -85,10 +85,10 @@ class PlaylistService {
         return items;
     }
 
-    async getRandomPlaylistItem(playlistId, maxDuration) {
+    async getRandomPlaylistItem(playlistId, minDuration = 0, maxDuration) {
         const videoIds = await this.getAllItems(playlistId);
         const videos = await this.getAllVideos(videoIds);
-        const filteredVideos = filterVideosByMaxDuration(videos, maxDuration);
+        const filteredVideos = filterVideosByMaxDuration(videos, minDuration, maxDuration);
 
         if (!filteredVideos.length) {
             return '';
