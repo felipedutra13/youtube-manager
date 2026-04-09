@@ -1,5 +1,6 @@
 import PlaylistService from '../services/playlist.js';
 import { playlists } from '../config/playlists.js';
+import VideoCard from '../views/videoCard.js';
 
 function getPlayslistIdByTitle(playlistTitle) {
   if (!playlists[playlistTitle]) {
@@ -17,7 +18,8 @@ class PlaylistController {
 
     try {
       const items = await playlistService.getRandomPlaylistItem(getPlayslistIdByTitle(id), minDuration, maxDuration);
-      res.json({ items });
+      const videoCard = new VideoCard();
+      res.send(videoCard.render(items));
     } catch (error) {
       res.status(500).json({ error: 'Erro ao buscar item da playlist' });
       console.log(error);
