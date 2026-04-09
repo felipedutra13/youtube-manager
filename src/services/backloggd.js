@@ -1,8 +1,10 @@
 import * as cheerio from "cheerio";
 import axios from "axios";
 import { platforms } from '../config/backloggd.js';
+import UserAgent from 'user-agents';
 
 const TARGET_URL = "https://backloggd.com/u/felipedutra13/backlog/added/type:backlog";//;played_platform:win/"
+const TIMEOUT = 1000;
 
 function getPlatformIdentifier(platform) {
     if (!platforms[platform]) {
@@ -46,7 +48,9 @@ async function getGamesByPlatform(platform) {
         const config = {
             'method': 'GET',
             'url': target,
-            'headers': {},
+            'headers': {
+                'User-Agent': new UserAgent().toString()
+            },
             'data': {}
         };
 
@@ -61,6 +65,8 @@ async function getGamesByPlatform(platform) {
         items.push(...result);
 
         currentPage++;
+
+        await new Promise(resolve => setTimeout(resolve, TIMEOUT));
     } while (!finished);
 
     return items;
