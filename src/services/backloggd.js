@@ -40,6 +40,8 @@ async function getGamesByPlatform(platform) {
     
     if (platform) {
         baseTarget += `;played_platform:${getPlatformIdentifier(platform)}/`;
+    } else {
+        throw new Error("Platform is required")
     }
 
     do {
@@ -79,8 +81,6 @@ class Backloggd {
         for (const platform of platforms) {
             items.push(... await getGamesByPlatform(platform));
         }
-
-        console.log(items);
 
         return getRandomElementList(items);
     }

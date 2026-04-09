@@ -1,7 +1,7 @@
 export const platforms = {
     pc: 'win',
     ps4: 'ps4--1',
-    ps5: 'playstation-5',
+    ps5: 'ps5',
     switch: 'nintendo-switch',
     ps2: 'ps2',
     xbox360: 'xbox360',
