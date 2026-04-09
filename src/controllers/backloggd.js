@@ -2,7 +2,11 @@ import Backloggd from "../services/backloggd.js";
 
 class BackloggdController {
     async getRandomVideogame(req, res) {
-        const { platform } = req.query;
+        let { platform } = req.query;
+
+        if (!Array.isArray(platform)) {
+            platform = [platform];
+        }
 
         const backloggdService = new Backloggd();
 

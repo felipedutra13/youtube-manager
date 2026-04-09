@@ -2,7 +2,6 @@ import * as cheerio from "cheerio";
 import axios from "axios";
 import { platforms } from '../config/backloggd.js';
 
-// const TARGET_URL = "https://backloggd.com/u/felipedutra13/backlog/added/type:backlog?page=1";
 const TARGET_URL = "https://backloggd.com/u/felipedutra13/backlog/added/type:backlog";//;played_platform:win/"
 
 function getPlatformIdentifier(platform) {
@@ -31,42 +30,52 @@ function extractGames(html) {
     return gameNames;
 }
 
-class Backloggd {
-    async getRandomVideogame(platform) {
-        let items = [];
-        let finished = false;
-        let currentPage = 1;
+async function getGamesByPlatform(platform) {
+    let items = [];
+    let finished = false;
+    let currentPage = 1;
+    let baseTarget = TARGET_URL;
+    
+    if (platform) {
+        baseTarget += `;played_platform:${getPlatformIdentifier(platform)}/`;
+    }
 
-        let baseTarget = TARGET_URL;
+    do {
+        let target = `${baseTarget}?page=${currentPage}`;
 
-        if (platform) {
-            baseTarget += `;played_platform:${getPlatformIdentifier(platform)}/`;
+        const config = {
+            'method': 'GET',
+            'url': target,
+            'headers': {},
+            'data': {}
+        };
+
+        let response = await axios(config);
+
+        let result = extractGames(response.data);
+
+        if (result.length < 40) {
+            finished = true;
         }
 
-        do {
-            let target = `${baseTarget}?page=${currentPage}`;
-            console.log(target);
+        items.push(...result);
 
-            const config = {
-                'method': 'GET',
-                'url': target,
-                'headers': {},
-                'data': {}
-            };
+        currentPage++;
+    } while (!finished);
 
-            let response = await axios(config);
+    return items;
+}
 
-            let result = extractGames(response.data);
-            if (result.length < 40) {
-                finished = true;
-            }
+class Backloggd {
+    async getRandomVideogame(platforms) {
+        let items = [];
 
-            items.push(...result);
-
-            currentPage++;
-        } while (!finished);
+        for (const platform of platforms) {
+            items.push(... await getGamesByPlatform(platform));
+        }
 
         console.log(items);
+
         return getRandomElementList(items);
     }
 };
