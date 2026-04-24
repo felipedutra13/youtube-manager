@@ -15,7 +15,9 @@ function formatOutput(item) {
 }
 
 function formatVideoIds(items) {
-    return items.map(item => item.snippet.resourceId.videoId);
+    return items
+    .filter(item => item.snippet.title !== 'Deleted video' && item.snippet.description !== 'This video is unavailable.')
+    .map(item => item.snippet.resourceId.videoId);
 }
 
 function filterVideosByMaxDuration(videos, minDuration, maxDuration) {
@@ -88,6 +90,7 @@ class PlaylistService {
     async getRandomPlaylistItem(playlistId, minDuration = 0, maxDuration) {
         const videoIds = await this.getAllItems(playlistId);
         const videos = await this.getAllVideos(videoIds);
+
         const filteredVideos = filterVideosByMaxDuration(videos, minDuration, maxDuration);
 
         if (!filteredVideos.length) {
