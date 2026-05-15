@@ -234,7 +234,7 @@ class JustWatch {
       'url': targetUrl,
       'headers': {
         "Content-Type": "application/json",
-        "authorization": process.env.JUST_WATCH_TOKEN
+        "authorization": params.accessToken ? params.accessToken : process.env.JUST_WATCH_TOKEN
       },
       'data': {
         'query': query,
@@ -252,8 +252,8 @@ class JustWatch {
     return [];
   }
 
-  async getRandomMovie(minDuration = 0, maxDuration, minScore) {
-    let movies = await this.getContent({ minDuration, maxDuration, minScore, type: "movie" });
+  async getRandomMovie(minDuration = 0, maxDuration, minScore, accessToken) {
+    let movies = await this.getContent({ minDuration, maxDuration, minScore, type: "movie", accessToken });
 
     if (!movies.length) {
       return '';
@@ -263,8 +263,8 @@ class JustWatch {
     return formatOutput(movie);
   }
 
-  async getRandomTvshow(minScore, viewType, animation) {
-    let items = await this.getContent({ minScore, viewType, type: "tv", animation });
+  async getRandomTvshow(minScore, viewType, animation, accessToken) {
+    let items = await this.getContent({ minScore, viewType, type: "tv", animation, accessToken });
 
     if (!items.length) {
       return '';
